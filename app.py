@@ -8,7 +8,23 @@ import tempfile
 from datetime import datetime
 
 app = Flask(__name__)
-CORS(app)  # Frontend ekata access denna
+
+# CORS configuration - Frontend ekata properly access denna
+CORS(app, resources={
+    r"/api/*": {
+        "origins": [
+            "http://localhost:3000",      # React default
+            "http://localhost:5173",      # Vite default
+            "http://localhost:5174",      # Vite alternative
+            "http://127.0.0.1:3000",
+            "http://127.0.0.1:5173",
+            "http://127.0.0.1:5174"
+        ],
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"],
+        "supports_credentials": True
+    }
+})
 
 # Temporary files wala tika save karanna
 DOWNLOAD_FOLDER = tempfile.gettempdir()
@@ -154,4 +170,9 @@ def health_check():
 
 if __name__ == '__main__':
     # Development mode eke run karanawa
+    print("🚀 Backend server starting on http://localhost:5000")
+    print("📡 API endpoints:")
+    print("   - GET  /api/health")
+    print("   - POST /api/video-info")
+    print("   - POST /api/download")
     app.run(debug=True, host='0.0.0.0', port=5000)
